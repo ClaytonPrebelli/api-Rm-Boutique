@@ -56,7 +56,7 @@ var app = builder.Build();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiRmBoutique v1");
-    c.RoutePrefix = "swagger"; // acessa em /swagger
+    c.RoutePrefix = "swagger"; 
 });
 
 
