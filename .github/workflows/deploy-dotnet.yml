@@ -28,11 +28,13 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./publish/
-          server-dir: /api.rmboutique.com.br/
-          dangerous-clean-slate: true   # limpa antes de copiar, evita lock
-          exclude: |
-            web.config                   # opcional: não sobrescreve arquivos críticos
+            server: ${{ secrets.FTP_SERVER }}
+            username: ${{ secrets.FTP_USERNAME }}
+            password: ${{ secrets.FTP_PASSWORD }}
+            local-dir: ./publish/
+            server-dir: /api.rmboutique.com.br/
+            dangerous-clean-slate: true
+            exclude: |
+              web.config
+              ApiRmBoutique.dll
+              ApiRmBoutique.pdb
