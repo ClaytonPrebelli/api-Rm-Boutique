@@ -10,21 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Setup .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
 
-      # 3. Publish (gera saída para ./publish)
       - name: Publish
-        run: dotnet publish --configuration Homolog --output ./publish
+        run: dotnet publish ApiRmBoutique/ApiRmBoutique.csproj --configuration Release --output ./publish
 
-      # 4. Deploy via FTP
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
@@ -33,7 +29,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publish/
           server-dir: /api.rmboutique.com.br/
-          git-ftp-args: --insecure
-          dangerous-clean-slate: true   # limpa antes de copiar, evita lock
-          exclude: |
-            web.config                   # opcional: não sobrescreve arquivos críticos
+          dangerous-clean-slate: true
