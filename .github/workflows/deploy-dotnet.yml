@@ -10,31 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Setup .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
 
-      # 3. Publish (gera saída para ./publish)
       - name: Publish
-        run: dotnet publish --configuration Homolog --output ./publish
+        run: dotnet publish ApiRmBoutique/ApiRmBoutique.csproj --configuration Release --output ./publish
 
-      # 4. Deploy via FTP
-      - name: Deploy via FTP
+      - name: Deploy to temp folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-            server: ${{ secrets.FTP_SERVER }}
-            username: ${{ secrets.FTP_USERNAME }}
-            password: ${{ secrets.FTP_PASSWORD }}
-            local-dir: ./publish/
-            server-dir: /api.rmboutique.com.br/
-            dangerous-clean-slate: true
-            exclude: |
-              web.config
-              ApiRmBoutique.dll
-              ApiRmBoutique.pdb
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./publish/
+          server-dir: /api.rmboutique_temp/
+          dangerous-clean-slate: true
+
+      - name: Swap folders (temp -> live)
+        run: |
+          echo "Renomeando pasta temporária para produção..."
+          ftp -inv ${{ secrets.FTP_SERVER }} <<EOF
+          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
+          rename /api.rmboutique.com.br /api.rmboutique_old
+          rename /api.rmboutique_temp /api.rmboutique.com.br
+          quit
+          EOF
